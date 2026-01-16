@@ -13,8 +13,6 @@ public class Vendor {
 
     @Override
     public String toString() {
-        return "Vendor{" +
-                "name='" + name + '\'' +
-                '}';
+        return name;
     }
 }

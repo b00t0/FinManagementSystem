@@ -2,15 +2,16 @@ package com.cbcode.fin.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 
 public class Expense {
-    private LocalDate date;
+    private YearMonth date;
     private BigDecimal amount;
     private ExpenseType type;
     private Vendor vendor;
     private ServiceType serviceType;
 
-    public Expense(LocalDate date, BigDecimal amount, ExpenseType type, Vendor vendor, ServiceType serviceType) {
+    public Expense(YearMonth date, BigDecimal amount, ExpenseType type, Vendor vendor, ServiceType serviceType) {
         this.date = date;
         this.amount = amount;
         this.type = type;
@@ -18,7 +19,7 @@ public class Expense {
         this.serviceType = serviceType;
     }
 
-    public LocalDate getDate() {
+    public YearMonth getDate() {
         return date;
     }
 

@@ -13,8 +13,6 @@ public class ServiceType {
 
     @Override
     public String toString() {
-        return "ServiceType{" +
-                "name='" + name + '\'' +
-                '}';
+        return name;
     }
 }
