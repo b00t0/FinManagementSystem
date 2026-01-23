@@ -31,6 +31,7 @@ public class ConsoleMenu {
             switch (choice) {
                 case "1" -> addExpense();
                 case "2" -> showAllExpenses();
+                case "3" -> showMonthlyReports();
                 case "0" -> running = false;
                 default -> System.out.println("Unknown option. Try again.");
             }
@@ -42,6 +43,7 @@ public class ConsoleMenu {
                 ===== OPEX Expense Tracker =====
                 1. Add expense
                 2. Show all expenses
+                3. Show monthly reports
                 0. Exit
                 """);
     }
@@ -49,7 +51,7 @@ public class ConsoleMenu {
     private void addExpense() {
         try {
             BigDecimal amount = readBigDecimal("Enter amount: ");
-            YearMonth date = readDate("Enter date (yyyy-MM-dd): ");
+            YearMonth date = readYearMonth("Enter date (yyyy-MM): ");
             ExpenseType expenseType = readEnum("Select expense type: ", ExpenseType.values());
 
             String vendorName = readString("Enter vendor name: ");
@@ -78,6 +80,29 @@ public class ConsoleMenu {
                 .forEach(System.out::println);
     }
 
+    private void showMonthlyReports() {
+        YearMonth period = readYearMonth("Enter month (yyyy-MM): ");
+
+        System.out.println("\n--- Monthly OPEX Report for " + period + " ---");
+
+        BigDecimal fixedTotal = expenseService.getTotalByType(ExpenseType.FIXED, period);
+        BigDecimal variableTotal = expenseService.getTotalByType(ExpenseType.VARIABLE, period);
+
+        System.out.println("Fixed expenses total: " + fixedTotal);
+        System.out.println("Variable expenses total: " + variableTotal);
+
+        System.out.println("\nBy Vendor");
+        expenseService.getTotalByVendor(period)
+                .forEach((vendor, amount) ->
+                        System.out.println(" - " + vendor + ": " + amount));
+
+        System.out.println("\nBy Service Type: ");
+        expenseService.getTotalByServiceType(period)
+                .forEach((serviceType, amount) ->
+                        System.out.println(" - " + serviceType + ": " + amount));
+
+    }
+
     private BigDecimal readBigDecimal(String prompt) {
         while (true) {
             System.out.println(prompt);
@@ -100,7 +125,7 @@ public class ConsoleMenu {
         }
     }
 
-    private YearMonth readDate(String prompt) {
+    private YearMonth readYearMonth(String prompt) {
         while (true) {
             System.out.println(prompt);
             try {
