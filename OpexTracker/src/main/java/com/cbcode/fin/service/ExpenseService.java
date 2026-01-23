@@ -10,7 +10,9 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ExpenseService {
     private final ExpenseRepository repository;
@@ -27,37 +29,33 @@ public class ExpenseService {
         return repository.findAll();
     }
 
-    public BigDecimal getTotalByType(ExpenseType type, YearMonth period) {
+    private Stream<Expense> expensesForPeriod(YearMonth period) {
         return repository.findAll().stream()
+                .filter(e -> e.getDate().equals(period));
+    }
+
+    private <K> Map<K, BigDecimal> aggregateBy(YearMonth period, Function<Expense, K> classifier) {
+        return expensesForPeriod(period)
+                .collect(Collectors.groupingBy(classifier, Collectors.reducing(
+                        BigDecimal.ZERO,
+                        Expense::getAmount,
+                        BigDecimal::add
+                )
+                ));
+    }
+
+    public BigDecimal getTotalByType(ExpenseType type, YearMonth period) {
+        return expensesForPeriod(period)
                 .filter(e -> e.getType() == type)
-                .filter(e -> e.getDate().equals(period))
                 .map(Expense::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public Map<Vendor, BigDecimal> getTotalByVendor(YearMonth period) {
-        return repository.findAll().stream()
-                .filter(expense -> expense.getDate().equals(period))
-                .collect(Collectors.groupingBy(
-                        Expense::getVendor,
-                        Collectors.reducing(
-                                BigDecimal.ZERO,
-                                Expense::getAmount,
-                                BigDecimal::add
-                        )
-                ));
+        return aggregateBy(period, Expense::getVendor);
     }
 
     public Map<ServiceType, BigDecimal> getTotalByServiceType(YearMonth period) {
-        return repository.findAll().stream()
-                .filter(e -> e.getDate().equals(period))
-                .collect(Collectors.groupingBy(
-                        Expense::getServiceType,
-                        Collectors.reducing(
-                                BigDecimal.ZERO,
-                                Expense::getAmount,
-                                BigDecimal::add
-                        )
-                ));
+        return aggregateBy(period, Expense::getServiceType);
     }
 }
