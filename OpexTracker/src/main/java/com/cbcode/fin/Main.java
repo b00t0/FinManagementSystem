@@ -5,6 +5,7 @@ import com.cbcode.fin.model.Expense;
 import com.cbcode.fin.model.ExpenseType;
 import com.cbcode.fin.model.ServiceType;
 import com.cbcode.fin.model.Vendor;
+import com.cbcode.fin.repository.ExcelExpenseRepository;
 import com.cbcode.fin.repository.ExpenseRepository;
 import com.cbcode.fin.repository.InMemoryExpenseRepository;
 import com.cbcode.fin.service.ExpenseService;
@@ -18,8 +19,24 @@ import java.time.YearMonth;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        ExpenseRepository repository = new InMemoryExpenseRepository();
-        ExpenseService service = new ExpenseService(new InMemoryExpenseRepository());
+//        ExpenseRepository repository = new InMemoryExpenseRepository();
+//        ExpenseService service = new ExpenseService(new InMemoryExpenseRepository());
+
+        ExpenseRepository repo = new ExcelExpenseRepository("expenses.xlsx");
+//
+        ExpenseService service = new ExpenseService(repo);
+//
+//        service.addExpense(
+//                new Expense(
+//                        YearMonth.now(),
+//                        new BigDecimal("1000"),
+//                        ExpenseType.FIXED,
+//                        new Vendor("UK45"),
+//                        new ServiceType("Rent")
+//                )
+//        );
+//
+//       service.getAllExpenses().forEach(System.out::println);
 
         ConsoleMenu menu = new ConsoleMenu(service);
         menu.start();
