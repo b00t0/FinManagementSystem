@@ -4,6 +4,7 @@ import com.cbcode.fin.model.Expense;
 import com.cbcode.fin.model.ExpenseType;
 import com.cbcode.fin.model.ServiceType;
 import com.cbcode.fin.model.Vendor;
+import com.cbcode.fin.report.OpexReport;
 import com.cbcode.fin.service.ExpenseService;
 
 import java.math.BigDecimal;
@@ -31,7 +32,7 @@ public class ConsoleMenu {
             switch (choice) {
                 case "1" -> addExpense();
                 case "2" -> showAllExpenses();
-                case "3" -> showMonthlyReports();
+                case "3" -> showOpexReportByType();
                 case "0" -> running = false;
                 default -> System.out.println("Unknown option. Try again.");
             }
@@ -43,7 +44,7 @@ public class ConsoleMenu {
                 ===== OPEX Expense Tracker =====
                 1. Add expense
                 2. Show all expenses
-                3. Show monthly reports
+                3. OPEX report by type
                 0. Exit
                 """);
     }
@@ -80,27 +81,25 @@ public class ConsoleMenu {
                 .forEach(System.out::println);
     }
 
-    private void showMonthlyReports() {
-        YearMonth period = readYearMonth("Enter month (yyyy-MM): ");
+    private void showOpexReportByType() {
+        System.out.println("Enter period (yyyy-MM): ");
+        YearMonth period = YearMonth.parse(scanner.nextLine());
 
-        System.out.println("\n--- Monthly OPEX Report for " + period + " ---");
+        OpexReport report = expenseService.generateOpexReport(period);
 
-        BigDecimal fixedTotal = expenseService.getTotalByType(ExpenseType.FIXED, period);
-        BigDecimal variableTotal = expenseService.getTotalByType(ExpenseType.VARIABLE, period);
+        System.out.println();
+        System.out.println("=== OPEX Report for " + report.getPeriod() + " ===");
+        System.out.println("\n-- By Type --");
+        report.getByType().forEach((type, amount) ->
+                System.out.println(type + ": " + amount));
+        System.out.println("\n-- By Vendor --");
+        report.getByVendor().forEach((vendor, amount) ->
+                System.out.println(vendor + ": " + amount));
+        System.out.println("\n-- By ServiceType --");
+        report.getByServiceType().forEach((serviceType, amount) ->
+                System.out.println(serviceType + ": " + amount));
 
-        System.out.println("Fixed expenses total: " + fixedTotal);
-        System.out.println("Variable expenses total: " + variableTotal);
-
-        System.out.println("\nBy Vendor");
-        expenseService.getTotalByVendor(period)
-                .forEach((vendor, amount) ->
-                        System.out.println(" - " + vendor + ": " + amount));
-
-        System.out.println("\nBy Service Type: ");
-        expenseService.getTotalByServiceType(period)
-                .forEach((serviceType, amount) ->
-                        System.out.println(" - " + serviceType + ": " + amount));
-
+        System.out.println("\nTOTAL: " + report.getTotal());
     }
 
     private BigDecimal readBigDecimal(String prompt) {
