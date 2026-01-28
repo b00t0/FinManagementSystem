@@ -5,6 +5,7 @@ import com.cbcode.fin.model.ExpenseType;
 import com.cbcode.fin.model.ServiceType;
 import com.cbcode.fin.model.Vendor;
 import com.cbcode.fin.report.OpexReport;
+import com.cbcode.fin.report.OpexReportFormatter;
 import com.cbcode.fin.service.ExpenseService;
 
 import java.math.BigDecimal;
@@ -82,24 +83,13 @@ public class ConsoleMenu {
     }
 
     private void showOpexReportByType() {
-        System.out.println("Enter period (yyyy-MM): ");
-        YearMonth period = YearMonth.parse(scanner.nextLine());
+
+        YearMonth period = readYearMonth("Enter period (yyyy-MM): ");
 
         OpexReport report = expenseService.generateOpexReport(period);
 
-        System.out.println();
-        System.out.println("=== OPEX Report for " + report.getPeriod() + " ===");
-        System.out.println("\n-- By Type --");
-        report.getByType().forEach((type, amount) ->
-                System.out.println(type + ": " + amount));
-        System.out.println("\n-- By Vendor --");
-        report.getByVendor().forEach((vendor, amount) ->
-                System.out.println(vendor + ": " + amount));
-        System.out.println("\n-- By ServiceType --");
-        report.getByServiceType().forEach((serviceType, amount) ->
-                System.out.println(serviceType + ": " + amount));
-
-        System.out.println("\nTOTAL: " + report.getTotal());
+        OpexReportFormatter formatter = new OpexReportFormatter();
+        formatter.printToConsole(report);
     }
 
     private BigDecimal readBigDecimal(String prompt) {
