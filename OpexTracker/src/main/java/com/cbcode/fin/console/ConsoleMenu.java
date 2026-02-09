@@ -5,10 +5,12 @@ import com.cbcode.fin.model.ExpenseType;
 import com.cbcode.fin.model.ServiceType;
 import com.cbcode.fin.model.Vendor;
 import com.cbcode.fin.report.OpexReport;
+import com.cbcode.fin.report.OpexReportExcelExporter;
 import com.cbcode.fin.report.OpexReportFormatter;
 import com.cbcode.fin.service.ExpenseService;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
@@ -17,10 +19,12 @@ import java.util.Scanner;
 public class ConsoleMenu {
     private final ExpenseService expenseService;
     private final Scanner scanner = new Scanner(System.in);
+    private final OpexReportExcelExporter exporter;
 
 
-    public ConsoleMenu(ExpenseService expenseService) {
+    public ConsoleMenu(ExpenseService expenseService, OpexReportExcelExporter exporter) {
         this.expenseService = expenseService;
+        this.exporter = exporter;
     }
 
     public void start() {
@@ -34,6 +38,7 @@ public class ConsoleMenu {
                 case "1" -> addExpense();
                 case "2" -> showAllExpenses();
                 case "3" -> showOpexReportByType();
+                case "4" -> exportOpexReport();
                 case "0" -> running = false;
                 default -> System.out.println("Unknown option. Try again.");
             }
@@ -46,6 +51,7 @@ public class ConsoleMenu {
                 1. Add expense
                 2. Show all expenses
                 3. OPEX report by type
+                4. Export OPEX report to Excel
                 0. Exit
                 """);
     }
@@ -90,6 +96,19 @@ public class ConsoleMenu {
 
         OpexReportFormatter formatter = new OpexReportFormatter();
         formatter.printToConsole(report);
+    }
+
+    private void exportOpexReport() {
+        YearMonth period = readYearMonth("Enter period (YYYY-MM): ");
+
+        OpexReport report = expenseService.generateOpexReport(period);
+
+        var path = Path.of("opex-report-" + period + ".xlsx");
+
+        exporter.export(report, path);
+
+        System.out.println("Report exported to " + path.toAbsolutePath());
+
     }
 
     private BigDecimal readBigDecimal(String prompt) {

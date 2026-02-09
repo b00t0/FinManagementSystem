@@ -16,7 +16,7 @@ public class OpexReport {
     private final Map<Vendor, BigDecimal> byVendor;
     private final Map<ServiceType, BigDecimal> byServiceType;
 
-    public OpexReport(YearMonth period,BigDecimal total, Map<ExpenseType, BigDecimal> byType, Map<Vendor, BigDecimal> byVendor, Map<ServiceType, BigDecimal> byServiceType) {
+    public OpexReport(YearMonth period, BigDecimal total, Map<ExpenseType, BigDecimal> byType, Map<Vendor, BigDecimal> byVendor, Map<ServiceType, BigDecimal> byServiceType) {
         this.period = period;
         this.total = total;
         this.byType = byType;
