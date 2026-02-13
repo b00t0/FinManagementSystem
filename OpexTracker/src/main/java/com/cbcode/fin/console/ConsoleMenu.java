@@ -7,6 +7,7 @@ import com.cbcode.fin.model.Vendor;
 import com.cbcode.fin.report.OpexReport;
 import com.cbcode.fin.report.OpexReportExcelExporter;
 import com.cbcode.fin.report.OpexReportFormatter;
+import com.cbcode.fin.report.ReportExporter;
 import com.cbcode.fin.service.ExpenseService;
 
 import java.math.BigDecimal;
@@ -19,10 +20,10 @@ import java.util.Scanner;
 public class ConsoleMenu {
     private final ExpenseService expenseService;
     private final Scanner scanner = new Scanner(System.in);
-    private final OpexReportExcelExporter exporter;
+    private final ReportExporter exporter;
 
 
-    public ConsoleMenu(ExpenseService expenseService, OpexReportExcelExporter exporter) {
+    public ConsoleMenu(ExpenseService expenseService, ReportExporter exporter) {
         this.expenseService = expenseService;
         this.exporter = exporter;
     }

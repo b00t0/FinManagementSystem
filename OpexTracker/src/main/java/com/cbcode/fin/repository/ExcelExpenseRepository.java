@@ -23,8 +23,9 @@ import java.util.List;
 public class ExcelExpenseRepository implements ExpenseRepository {
     private final Path filePath;
 
-    public ExcelExpenseRepository(String filePath) {
-        this.filePath = Paths.get(filePath);
+    public ExcelExpenseRepository(Path filePath) {
+        this.filePath = filePath;
+        System.out.println("Using file: " + filePath.toAbsolutePath());
     }
 
     @Override

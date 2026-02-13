@@ -5,7 +5,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import javax.imageio.IIOException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -15,6 +14,7 @@ import java.util.Map;
 
 public class OpexReportExcelExporter implements ReportExporter {
 
+    @Override
     public void export(OpexReport report, Path path) {
 
         try (Workbook workbook = new XSSFWorkbook();
@@ -63,8 +63,5 @@ public class OpexReportExcelExporter implements ReportExporter {
         }
     }
 
-    @Override
-    public void export(OpexReport report) {
 
-    }
 }
