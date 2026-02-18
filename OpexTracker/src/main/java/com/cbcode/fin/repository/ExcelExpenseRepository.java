@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ExcelExpenseRepository implements ExpenseRepository {
     private final Path filePath;
@@ -45,13 +46,14 @@ public class ExcelExpenseRepository implements ExpenseRepository {
             for (Row row : sheet) {
                 if (row.getRowNum() == 0) continue;
 
-                YearMonth date = YearMonth.parse(row.getCell(0).getStringCellValue());
-                BigDecimal amount = BigDecimal.valueOf(row.getCell(1).getNumericCellValue());
-                ExpenseType type = ExpenseType.valueOf(row.getCell(2).getStringCellValue());
-                Vendor vendor = new Vendor(row.getCell(3).getStringCellValue());
-                ServiceType serviceType = new ServiceType(row.getCell(4).getStringCellValue());
+                UUID id = UUID.fromString(row.getCell(0).getStringCellValue());
+                YearMonth date = YearMonth.parse(row.getCell(1).getStringCellValue());
+                BigDecimal amount = BigDecimal.valueOf(row.getCell(2).getNumericCellValue());
+                ExpenseType type = ExpenseType.valueOf(row.getCell(3).getStringCellValue());
+                Vendor vendor = new Vendor(row.getCell(4).getStringCellValue());
+                ServiceType serviceType = new ServiceType(row.getCell(5).getStringCellValue());
 
-                expenses.add(new Expense(date, amount, type, vendor, serviceType));
+                expenses.add(new Expense(id, date, amount, type, vendor, serviceType));
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to read expenses from Excel", e);
@@ -68,11 +70,12 @@ public class ExcelExpenseRepository implements ExpenseRepository {
             Sheet sheet = workbook.createSheet("Expenses");
 
             Row header = sheet.createRow(0);
-            header.createCell(0).setCellValue("Date");
-            header.createCell(1).setCellValue("Amount");
-            header.createCell(2).setCellValue("Type");
-            header.createCell(3).setCellValue("Vendor");
-            header.createCell(4).setCellValue("ServiceType");
+            header.createCell(0).setCellValue("Id");
+            header.createCell(1).setCellValue("Date");
+            header.createCell(2).setCellValue("Amount");
+            header.createCell(3).setCellValue("Type");
+            header.createCell(4).setCellValue("Vendor");
+            header.createCell(5).setCellValue("ServiceType");
 
             try (OutputStream os = Files.newOutputStream(filePath)){
                 workbook.write(os);
@@ -94,11 +97,12 @@ public class ExcelExpenseRepository implements ExpenseRepository {
 
             Row row = sheet.createRow(lastRowNum + 1);
 
-            row.createCell(0).setCellValue(expense.getDate().toString());
-            row.createCell(1).setCellValue(expense.getAmount().doubleValue());
-            row.createCell(2).setCellValue(expense.getType().name());
-            row.createCell(3).setCellValue(expense.getVendor().getName());
-            row.createCell(4).setCellValue(expense.getServiceType().getName());
+            row.createCell(0).setCellValue(expense.getId().toString());
+            row.createCell(1).setCellValue(expense.getDate().toString());
+            row.createCell(2).setCellValue(expense.getAmount().doubleValue());
+            row.createCell(3).setCellValue(expense.getType().name());
+            row.createCell(4).setCellValue(expense.getVendor().name());
+            row.createCell(5).setCellValue(expense.getServiceType().name());
 
             try (OutputStream os = Files.newOutputStream(filePath)){
                 workbook.write(os);

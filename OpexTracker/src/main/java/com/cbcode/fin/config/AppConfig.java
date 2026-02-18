@@ -12,11 +12,20 @@ import java.nio.file.Path;
 public class AppConfig {
 
     public ConsoleMenu consoleMenu() {
+        return new ConsoleMenu(expenseService(), reportExporter());
+    }
 
+    private ExpenseService expenseService() {
+        return new ExpenseService(expenseRepository());
+    }
+
+    private ExpenseRepository expenseRepository() {
         Path path = Path.of("expenses.xlsx");
-        ExpenseRepository repository = new ExcelExpenseRepository(path);
-        ExpenseService expenseService = new ExpenseService(repository);
-        ReportExporter exporter = new OpexReportExcelExporter();
-        return new ConsoleMenu(expenseService, exporter);
+        return new ExcelExpenseRepository(path);
+    }
+
+    private ReportExporter reportExporter() {
+        return new OpexReportExcelExporter();
     }
 }
+

@@ -6,14 +6,23 @@ import java.util.UUID;
 
 public class Expense {
     private final UUID id;
-    private YearMonth date;
-    private BigDecimal amount;
-    private ExpenseType type;
-    private Vendor vendor;
-    private ServiceType serviceType;
+    private final YearMonth date;
+    private final BigDecimal amount;
+    private final ExpenseType type;
+    private final Vendor vendor;
+    private final ServiceType serviceType;
+
+    public Expense(YearMonth date, BigDecimal amount, ExpenseType type, Vendor vendor, ServiceType serviceType) {
+        this.id = UUID.randomUUID();
+        this.date = date;
+        this.amount = amount;
+        this.type = type;
+        this.vendor = vendor;
+        this.serviceType = serviceType;
+    }
 
     public Expense(UUID id, YearMonth date, BigDecimal amount, ExpenseType type, Vendor vendor, ServiceType serviceType) {
-        this.id = UUID.randomUUID();
+        this.id = id;
         this.date = date;
         this.amount = amount;
         this.type = type;
@@ -48,8 +57,8 @@ public class Expense {
     @Override
     public String toString() {
         return "Expense{" +
-                "id" + id +
-                "date=" + date +
+                "id=" + id +
+                ", date=" + date +
                 ", amount=" + amount +
                 ", type=" + type +
                 ", vendor=" + vendor +
